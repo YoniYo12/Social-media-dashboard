@@ -1,1 +1,123 @@
-// Insert your index.html code here.
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Dashboard App</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    header {
+      background-color: #0077cc;
+      color: #fff;
+      padding: 20px;
+      text-align: right;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    p {
+      color: #555;
+      font-size: 1.2em;
+    }
+
+    .app-names {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .app-names div {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: #0099ff;
+      color: #fff;
+      border-radius: 5px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .button-link {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: 2px solid #0099ff;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #0099ff;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <button id="registerBtn" class="button-link" style="display:none" onclick="window.location.href='/register'">Register</button>
+    <button id="loginBtn" class="button-link" style="display:none" onclick="window.location.href='/login'">Login</button>
+    <button id="logoutBtn" class="button-link" style="display:none" onclick="logout()">Logout</button>
+  </header>
+
+  <h1>Welcome to the Social Media Dashboard App!</h1>
+  <p id="welcomeMessage">Explore and manage your social media accounts in one place.</p>
+
+  <div class="app-names">
+    <div>FaceSnap</div>
+    <div>InstaBook</div>
+    <div>TweetChat</div>
+  </div>
+
+  <button id="createPostBtn" class="button-link" style="display:none" onclick="redirectToPostCreation()">Create Post</button>
+
+  <script>
+    function getUsernameFromURL() {
+      return new URLSearchParams(window.location.search).get('username');
+    }
+
+    function handleAuthentication() {
+      const username = getUsernameFromURL();
+      const registerBtn = document.getElementById('registerBtn');
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const createPostBtn = document.getElementById('createPostBtn');
+
+      if (username) {
+        registerBtn.style.display = loginBtn.style.display = 'none';
+        logoutBtn.style.display = createPostBtn.style.display = 'inline-block';
+        welcomeMessage.innerText = `Welcome, ${username}!`;
+      } else {
+        registerBtn.style.display = loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = createPostBtn.style.display = 'none';
+      }
+    }
+
+    function logout() {
+      window.location.href = '/logout';
+    }
+
+    function redirectToPostCreation() {
+      window.location.href = '/post';
+    }
+
+    window.onload = function () {
+      getUsernameFromURL();
+      handleAuthentication();
+    };
+  </script>
+</body>
+
+</html>

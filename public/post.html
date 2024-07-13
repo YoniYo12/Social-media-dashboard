@@ -1,1 +1,227 @@
-// Insert your post.html code here.
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create and Manage Posts</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    header {
+      background-color: #0077cc;
+      color: #fff;
+      padding: 20px;
+      text-align: right;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .post-form, .post-list {
+      width: 60%;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label, textarea {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #0099ff;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .post {
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .post-text {
+      flex-grow: 1;
+      margin-right: 10px;
+      font-size: 1.1em;
+      color: #333;
+    }
+
+    .edit-post-btn, .delete-post-btn {
+      padding: 8px;
+      margin-right: 5px;
+      cursor: pointer;
+      background-color: #0099ff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .pagination {
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      background-color: #0099ff;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      margin: 0 5px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .pagination button:hover {
+      background-color: #0077cc;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+  </header>
+
+  <h1>Create and Manage Posts</h1>
+
+  <div class="post-form">
+    <label for="text">Create a new post:</label>
+    <textarea id="text" name="text" rows="4" required></textarea>
+    <button onclick="createPost()">Create Post</button>
+  </div>
+
+  <div class="post-list" id="postList"></div>
+
+  <div class="pagination" id="pagination"></div>
+
+  <script>
+    const posts = [];
+    const postsPerPage = 3;
+    let currentPage = 1;
+
+    function createPost() {
+      const text = document.getElementById('text').value;
+      if (text) {
+        posts.push({ id: posts.length + 1, text });
+        updatePostList();
+        document.getElementById('text').value = '';
+      }
+    }
+
+    function deletePost(postId) {
+      const index = posts.findIndex(post => post.id === postId);
+      if (index !== -1) {
+        posts.splice(index, 1);
+        updatePostList();
+      }
+    }
+
+    function editPost(postId) {
+      const newText = prompt('Edit the post:', posts.find(post => post.id === postId).text);
+      if (newText !== null) {
+        const index = posts.findIndex(post => post.id === postId);
+        if (index !== -1) {
+          posts[index].text = newText;
+          updatePostList();
+        }
+      }
+    }
+
+    function updatePostList() {
+      const postList = document.getElementById('postList');
+      const pagination = document.getElementById('pagination');
+      const startIndex = (currentPage - 1) * postsPerPage;
+      const endIndex = startIndex + postsPerPage;
+      postList.innerHTML = '';
+
+      if (posts.length === 0) {
+        postList.innerHTML = '<p>No posts available.</p>';
+        pagination.innerHTML = '';
+        return;
+      }
+
+      posts.slice(startIndex, endIndex).forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.classList.add('post');
+
+        const postText = document.createElement('div');
+        postText.classList.add('post-text');
+        postText.textContent = post.text;
+
+        const editButton = document.createElement('span');
+        editButton.classList.add('edit-post-btn');
+        editButton.textContent = 'Edit';
+        editButton.onclick = () => editPost(post.id);
+
+        const deleteButton = document.createElement('span');
+        deleteButton.classList.add('delete-post-btn');
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = () => deletePost(post.id);
+
+        postElement.appendChild(postText);
+        postElement.appendChild(editButton);
+        postElement.appendChild(deleteButton);
+
+        postList.appendChild(postElement);
+      });
+
+      const totalPages = Math.ceil(posts.length / postsPerPage);
+      pagination.innerHTML = '';
+
+      const maxPages = Math.min(5, totalPages);
+
+      for (let i = 1; i <= maxPages; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.onclick = () => {
+          currentPage = i;
+          updatePostList();
+        };
+        pagination.appendChild(pageButton);
+      }
+    }
+
+    function logout() {
+      window.location.href = '/logout';
+    }
+
+    window.onload = () => updatePostList();
+  </script>
+</body>
+
+</html>
